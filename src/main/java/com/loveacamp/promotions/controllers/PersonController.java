@@ -20,4 +20,6 @@ public class PersonController {
     public ResponseEntity<PersonDto> save(@Valid @RequestBody PersonRequestDto personRequest) {
         return ResponseEntity.ok(service.save(personRequest));
     }
+
+//    @GetMapping
 }
