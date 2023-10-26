@@ -21,11 +21,19 @@ public class ProductService implements IProductService {
 
     @Override
     public ProductDto save(ProductRequestDto productRequestDto) {
+        if (this.repository.findByName(productRequestDto.getName()).isPresent()) {
+            throw new BadRequestException("Já existe um produto cadastrado com este nome.");
+        }
+
         return ProductDto.toDto(this.repository.save(this.toEntity(productRequestDto)));
     }
 
     @Override
     public ProductDto update(Long id, ProductRequestDto productRequestDto) {
+        if (this.repository.findByIdAndName(id, productRequestDto.getName()).isPresent()) {
+            throw new BadRequestException("Já existe um produto cadastrado com este nome.");
+        }
+
         Product product = this.toEntity(productRequestDto);
         product.setId(id);
 
@@ -34,7 +42,7 @@ public class ProductService implements IProductService {
 
     @Override
     public ProductDto findById(Long id) {
-        Product product = this.existProduct(id);
+        Product product = this.productDoesNotExistThrowAnException(id);
 
         return ProductDto.toDto(product);
     }
@@ -46,15 +54,15 @@ public class ProductService implements IProductService {
 
     @Override
     public ProductDto delete(Long id) {
-        Product product = this.existProduct(id);
+        Product product = this.productDoesNotExistThrowAnException(id);
 
         this.repository.delete(product);
 
         return ProductDto.toDto(product);
     }
 
-    private Product existProduct(Long id){
-       return this.repository.findById(id).orElseThrow(() -> new BadRequestException("Produto não encontrado."));
+    private Product productDoesNotExistThrowAnException(Long id) {
+        return this.repository.findById(id).orElseThrow(() -> new BadRequestException("Produto não encontrado."));
     }
 
     private Product toEntity(ProductRequestDto productDto) {

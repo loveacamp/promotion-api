@@ -39,4 +39,12 @@ public class ProductDto {
     public static List<ProductDto> toDto(List<Product> products) {
         return products.stream().map(ProductDto::toDto).collect(Collectors.toList());
     }
+
+    @Override
+    public String toString() {
+        return String.format("ProductDto({id:%s, name:%s})",
+                this.getId(),
+                this.getName()
+        );
+    }
 }

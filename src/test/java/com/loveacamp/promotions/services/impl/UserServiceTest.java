@@ -37,7 +37,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("create: Esperado que ao receber um username existente, retorne uma exceção")
+    @DisplayName("save: Esperado que ao receber um username existente, retorne uma exceção")
     public void givenExistsUserWhenSaveThenException() {
         when(this.repository.findByUsername(eq(this.userRequest.getUsername())))
                 .thenReturn(Optional.of(mock(User.class)));
@@ -50,7 +50,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("create: Esperado que ao receber um username inexistente, retorne um usuário")
+    @DisplayName("save: Esperado que ao receber um username inexistente, retorne um usuário")
     public void givenNotExistsUserWhenSaveThenUser() {
         when(this.repository.findByUsername(eq(this.userRequest.getUsername())))
                 .thenReturn(Optional.empty());
