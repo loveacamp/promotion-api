@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsById(Long id);
 
-    @Query(""" 
+    @Query("""
            SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END 
            FROM User u WHERE u.username = :username AND u.id <> :id
     """)
