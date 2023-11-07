@@ -2,10 +2,12 @@ package com.loveacamp.promotions.dto;
 
 import com.loveacamp.promotions.entities.Product;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.json.JSONObject;
 
-public class ProductDto {
+public class ProductDto implements Serializable {
     private Long id;
 
     private String name;
@@ -47,4 +49,12 @@ public class ProductDto {
                 this.getName()
         );
     }
+
+//    @Override
+//    public String toString() {
+//        return new JSONObject()
+//                .put("id", this.getId())
+//                .put("name", this.getName())
+//                .toString();
+//    }
 }

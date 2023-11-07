@@ -1,11 +1,12 @@
 package com.loveacamp.promotions.services.impl;
 
 import com.loveacamp.promotions.dto.ProductDto;
-import com.loveacamp.promotions.dto.UserDto;
 import com.loveacamp.promotions.dto.requests.ProductRequestDto;
 import com.loveacamp.promotions.entities.Product;
 import com.loveacamp.promotions.exception.BadRequestException;
 import com.loveacamp.promotions.repositories.ProductRepository;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,7 +53,7 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("save: Esperado que ao receber um produto inexistente, retorne um produto")
-    public void givenNotExistsProductWhenSaveThenProduct() {
+    public void givenNotExistsProductWhenSaveThenProduct() throws JSONException {
         when(this.repository.findByName(eq(this.productRequest.getName())))
                 .thenReturn(Optional.empty());
         when(this.repository.save(argThat(this::checkArgs))).thenReturn(this.createProduct());

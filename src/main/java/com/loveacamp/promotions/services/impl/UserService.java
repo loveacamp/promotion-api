@@ -12,7 +12,6 @@ import java.util.List;
 
 @Service
 public class UserService implements IUserService {
-
     private final UserRepository repository;
 
     public UserService(UserRepository repository) {
@@ -22,15 +21,10 @@ public class UserService implements IUserService {
     @Override
     public UserDto save(UserRequestDto userRequest) {
         if (repository.findByUsername(userRequest.getUsername()).isPresent()) {
-            throw new BadRequestException("Usuário ja existe.");
+            throw new BadRequestException("Usuário já existe.");
         }
 
         return UserDto.toDto(repository.save(toEntity(userRequest)));
-    }
-
-    @Override
-    public List<UserDto> findAll() {
-        return UserDto.toDto(repository.findAll());
     }
 
     @Override
@@ -46,6 +40,11 @@ public class UserService implements IUserService {
         user.setLevel(userRequest.getLevel());
 
         return UserDto.toDto(repository.save(user));
+    }
+
+    @Override
+    public List<UserDto> findAll() {
+        return UserDto.toDto(repository.findAll());
     }
 
     private User toEntity(UserRequestDto dto) {
