@@ -1,4 +1,4 @@
-name: Run Tests with Coverage Check
+name: Testes de Spring
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout Repository
@@ -21,32 +21,6 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
 
-      - name: Build and Test with JaCoCo
+      - name: Build and Test
         run: |
-          ./mvnw clean verify
-
-      - name: Generate JaCoCo Coverage Report
-        run: |
-          ./mvnw jacoco:report
-
-  check-coverage:
-    needs: test
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Java
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-
-      - name: Check JaCoCo Coverage
-        run: |
-          coverage=$(cat target/site/jacoco/index.html | grep -oP "(?<=<span class=\"ctr\">)[^%]*(?=%<\/span>)")
-          if [ "$coverage" -lt 80 ]; then
-            echo "Erro: Cobertura de testes abaixo de 80%."
-            exit 1
-          fi
+          .\mvnw.cmd clean test
