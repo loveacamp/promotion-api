@@ -20,14 +20,32 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Build with Maven
+    - name: Build
       run: mvn -B package --file pom.xml
-
-    - name: Tests
-      run: mvn -B test --file pom.xml
 
     - name: Add Comment on PR
       if: failure()
       run: |
-        echo "Testes falharam. Por favor, corrija os problemas antes de fazer o merge." > pr_comment.txt
+        echo "Build falhou. Por favor, corrija os problemas antes de fazer o merge." > pr_comment.txt
         gh pr review --body "$(cat pr_comment.txt)" --comment
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Test
+        run: mvn -B test --file pom.xml
+
+      - name: Add Comment on PR
+        if: failure()
+        run: |
+          echo "Testes falharam. Por favor, corrija os problemas antes de fazer o merge." > pr_comment.txt
+          gh pr review --body "$(cat pr_comment.txt)" --comment
