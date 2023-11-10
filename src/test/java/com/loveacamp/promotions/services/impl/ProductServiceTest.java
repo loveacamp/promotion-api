@@ -174,7 +174,7 @@ class ProductServiceTest {
         verify(this.repository, times(1)).delete(eq(product));
         verifyNoMoreInteractions(this.repository);
 
-        assertThat(productDto).hasToString("ProductDto({id:2, name:Pastel de Frango})");
+        assertThat(productDto).hasToString("ProductDto({id:3, name:Pastel de Frango})");
     }
 
     private boolean checkArgs(Product product) {
