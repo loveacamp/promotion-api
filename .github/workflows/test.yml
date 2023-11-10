@@ -25,3 +25,9 @@ jobs:
 
     - name: Tests
       run: mvn -B test --file pom.xml
+
+    - name: Add Comment on PR
+      if: failure()
+      run: |
+        echo "Testes falharam. Por favor, corrija os problemas antes de fazer o merge." > pr_comment.txt
+        gh pr review --body "$(cat pr_comment.txt)" --comment
