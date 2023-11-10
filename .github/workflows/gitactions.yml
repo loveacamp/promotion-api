@@ -23,4 +23,4 @@ jobs:
 
       - name: Build and Test
         run: |
-          .\mvnw.cmd clean test
+          .\\mvnw.cmd clean test
