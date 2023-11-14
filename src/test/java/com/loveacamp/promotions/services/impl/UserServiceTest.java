@@ -27,41 +27,88 @@ class UserServiceTest {
     @Mock
     private UserRepository repository;
 
-    private UserRequestDto userRequest;
+    private UserRequestDto userRequestDto;
 
     @BeforeEach
     public void setup() {
-        this.userRequest = createUserRequestDto();
+        this.userRequestDto = createUserRequestDto();
 
         this.service = new UserService(this.repository);
     }
 
     @Test
-    @DisplayName("create: Esperado que ao receber um username existente, retorne uma exceção")
+    @DisplayName("save: Esperado que ao receber um username existente, retorne uma exceção")
     public void givenExistsUserWhenSaveThenException() {
-        when(this.repository.findByUsername(eq(this.userRequest.getUsername())))
-                .thenReturn(Optional.of(mock(User.class)));
+        when(this.repository.findByUsername(eq(this.userRequestDto.getUsername()))).thenReturn(Optional.of(mock(User.class)));
 
-        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> this.service.save(this.userRequest));
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> this.service.save(this.userRequestDto));
 
-        assertThat(badRequestException).hasMessage("Usuário ja existe.");
-        verify(this.repository, times(1)).findByUsername(eq(this.userRequest.getUsername()));
+        assertThat(badRequestException).hasMessage("Usuário já existe.");
+        verify(this.repository, times(1)).findByUsername(eq(this.userRequestDto.getUsername()));
         verifyNoMoreInteractions(this.repository);
     }
 
     @Test
-    @DisplayName("create: Esperado que ao receber um username inexistente, retorne um usuário")
+    @DisplayName("save: Esperado que ao receber um username inexistente, retorne um usuário")
     public void givenNotExistsUserWhenSaveThenUser() {
-        when(this.repository.findByUsername(eq(this.userRequest.getUsername())))
-                .thenReturn(Optional.empty());
-        when(this.repository.save(argThat(this::checkArgs)))
-                .thenReturn(createUser());
+        when(this.repository.findByUsername(eq(this.userRequestDto.getUsername()))).thenReturn(Optional.empty());
+        when(this.repository.save(argThat(this::checkArgs))).thenReturn(createUser());
 
-        UserDto userDto = this.service.save(this.userRequest);
+        UserDto userDto = this.service.save(this.userRequestDto);
 
-        verify(this.repository, times(1)).findByUsername(eq(this.userRequest.getUsername()));
+        verify(this.repository, times(1)).findByUsername(eq(this.userRequestDto.getUsername()));
         verify(this.repository, times(1)).save(argThat(this::checkArgs));
         verifyNoMoreInteractions(this.repository);
+
+        assertThat(userDto).hasToString("UserDto({id:1, username:John doe, level:ADMIN})");
+    }
+
+    @Test
+    @DisplayName("update: Esperado que ao receber um username inexistente, retorne uma exceção")
+    public void givenNotExistsUserWhenUpdateThenException() {
+        Long id = 1L;
+
+        when(this.repository.findById(eq(id))).thenReturn(Optional.empty());
+
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> this.service.update(id, this.userRequestDto));
+
+        assertThat(badRequestException).hasMessage("Usuário não encontrado.");
+        verify(this.repository, times(1)).findById(eq(id));
+        verifyNoMoreInteractions(this.repository);
+    }
+
+    @Test
+    @DisplayName("update: Esperado que ao receber um username já vinculado a outra conta, retorne uma exceção")
+    public void givenUserAlreadyLinkedToAnotherAccountWhenUpdateThenException() {
+        Long id = 1L;
+
+        when(this.repository.findById(eq(id))).thenReturn(Optional.of(createUser()));
+        when(this.repository.existsByUsernameNotId(eq(userRequestDto.getUsername()),eq(id))).thenReturn(true);
+
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> this.service.update(id, this.userRequestDto));
+
+        assertThat(badRequestException).hasMessage("Nome de usuário já vínculado a outra conta.");
+        verify(this.repository, times(1)).findById(eq(id));
+        verify(this.repository, times(1)).existsByUsernameNotId(eq(userRequestDto.getUsername()),eq(id));
+        verifyNoMoreInteractions(this.repository);
+    }
+
+    @Test
+    @DisplayName("update: Esperado que ao receber um username existente, sem vinculo com outra conta, retorne um usuário")
+    public void givenUserWhenUpdateThenException() {
+        Long id = 1L;
+
+        when(this.repository.findById(eq(id))).thenReturn(Optional.of(createUser()));
+        when(this.repository.existsByUsernameNotId(eq(userRequestDto.getUsername()),eq(id))).thenReturn(false);
+        when(this.repository.save(argThat(this::checkArgs))).thenReturn(createUser());
+
+        UserDto userDto =  this.service.update(id, this.userRequestDto);
+
+        verify(this.repository, times(1)).findById(eq(id));
+        verify(this.repository, times(1)).existsByUsernameNotId(eq(userRequestDto.getUsername()),eq(id));
+        verify(this.repository, times(1)).save(argThat(this::checkArgs));
+        verifyNoMoreInteractions(this.repository);
+
         assertThat(userDto).hasToString("UserDto({id:1, username:John doe, level:ADMIN})");
     }
 
@@ -79,9 +126,9 @@ class UserServiceTest {
     }
 
     private boolean checkArgs(User user) {
-        return user.getUsername().equals(this.userRequest.getUsername())
-                && user.getPassword().equals(this.userRequest.getPassword())
-                && user.getLevel().equals(this.userRequest.getLevel());
+        return user.getUsername().equals(this.userRequestDto.getUsername())
+                && user.getPassword().equals(this.userRequestDto.getPassword())
+                && user.getLevel().equals(this.userRequestDto.getLevel());
     }
 
     private UserRequestDto createUserRequestDto() {
@@ -89,11 +136,11 @@ class UserServiceTest {
     }
 
     private User createUser() {
-        return new User(1L, this.userRequest.getUsername(), this.userRequest.getPassword(), this.userRequest.getLevel());
+        return new User(1L, this.userRequestDto.getUsername(), this.userRequestDto.getPassword(), this.userRequestDto.getLevel());
     }
 
     private User createUser(long id) {
-        User user =  createUser();
+        User user = createUser();
         user.setId(id);
 
         return user;

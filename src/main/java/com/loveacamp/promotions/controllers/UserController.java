@@ -23,13 +23,13 @@ public class UserController {
         return ResponseEntity.ok(service.save(user));
     }
 
-    @GetMapping
-    public ResponseEntity<List<UserDto>> findAll() {
-        return ResponseEntity.ok(service.findAll());
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> update(@PathVariable("id") long id, @Valid @RequestBody UserRequestDto user) {
         return ResponseEntity.ok(service.update(id, user));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserDto>> findAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 }
