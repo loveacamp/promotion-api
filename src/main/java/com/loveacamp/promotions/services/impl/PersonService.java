@@ -43,7 +43,7 @@ public class PersonService implements IPersonService {
         Person person = getPersonFromRepositoryById(id);
 
         if (repository.existsByEmailNotId(personRequest.getEmail(), id)) {
-            throw new BadRequestException("Este e-mail já está em uso.");
+            throw new BadRequestException("Email já esta vinculado a outra conta.");
         }
 
         person.setName(person.getName());

@@ -251,8 +251,7 @@ class ProductControllerTest extends AbstractControllerTest {
 
         mockMvc.perform(get(String.format("/api/products/%s", id))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(serializeInput(productRequest)))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(result -> {
                     responseStatus(result, HttpStatus.OK);
                     JSONAssert.assertEquals("""
@@ -276,8 +275,7 @@ class ProductControllerTest extends AbstractControllerTest {
 
         mockMvc.perform(get("/api/products")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(serializeInput(productRequest)))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(result -> {
                     responseStatus(result, HttpStatus.OK);
                     JSONAssert.assertEquals("""

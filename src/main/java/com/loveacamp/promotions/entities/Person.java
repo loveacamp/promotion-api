@@ -5,6 +5,15 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "PEOPLE")
 public class Person {
+    public Person(Long id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    public Person() {
+    }
+
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     @Column(name = "ID")
