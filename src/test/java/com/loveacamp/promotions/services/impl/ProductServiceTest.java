@@ -6,7 +6,6 @@ import com.loveacamp.promotions.entities.Product;
 import com.loveacamp.promotions.exception.BadRequestException;
 import com.loveacamp.promotions.repositories.ProductRepository;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -69,7 +68,7 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("update: Esperado que ao receber um produto existente, retorne uma exceção")
-    public void givenExistsProductWhenUpdateThenException() {
+    public void givenNotExistsProductWhenUpdateThenException() {
         Long id = 1L;
 
         when(this.repository.findByIdAndName(eq(id), eq(this.productRequest.getName())))
@@ -101,8 +100,8 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("findById: Esperado que ao receber um produto existente, retorne uma exceção")
-    public void givenExistsProductWhenFindByIdThenException() {
+    @DisplayName("findById: Esperado que ao receber um produto inexistente, retorne uma exceção")
+    public void givenNotExistsProductWhenFindByIdThen400() {
         Long id = 1L;
 
         when(this.repository.findById(eq(id)))
@@ -116,8 +115,8 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("findById: Esperado que ao receber um produto inexistente, retorne um produto")
-    public void givenNotExistsProductWhenFindByIdThenProduct() {
+    @DisplayName("findById: Esperado que ao receber um produto existente, retorne um produto")
+    public void givenExistsProductWhenFindByIdThenException() {
         Long id = 1L;
 
         when(this.repository.findById(eq(id)))
