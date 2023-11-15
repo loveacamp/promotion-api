@@ -47,8 +47,8 @@ public class PersonDto {
 
         return personDto
                 .setId(person.getId())
-                .setName(personDto.getName())
-                .setEmail(personDto.getEmail());
+                .setName(person.getName())
+                .setEmail(person.getEmail());
     }
 
     public static List<PersonDto> toDto(List<Person> people) {
